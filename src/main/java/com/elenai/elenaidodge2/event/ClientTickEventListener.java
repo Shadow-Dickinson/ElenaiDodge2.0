@@ -112,7 +112,7 @@ public class ClientTickEventListener {
 				}
 
 				// ALPHA
-				if (ClientStorage.dodges >= 20 && alpha > 0 && DodgeGui.alpha > 0) {
+				if (ClientStorage.dodges >= ClientStorage.maxDodges && alpha > 0 && DodgeGui.alpha > 0) {
 					alpha--;
 				}
 
@@ -121,7 +121,7 @@ public class ClientTickEventListener {
 				}
 
 				// REGENERATION LOGIC
-				if (ClientStorage.dodges < 20) {
+				if (ClientStorage.dodges < ClientStorage.maxDodges) {
 
 					if (regen > 0 && Utils.tanEnabled(player)) {
 						if (ToughAsNailsClient.highThirst()) {
@@ -137,7 +137,7 @@ public class ClientTickEventListener {
 							PacketHandler.instance.sendToServer(new SThirstMessage());
 						}
 
-						ClientStorage.dodges++;
+						ClientStorage.dodges = Math.min(ClientStorage.dodges + 1, ClientStorage.maxDodges);
 						PacketHandler.instance.sendToServer(new SDodgeRegenMessage(ClientStorage.dodges));
 						flashes = 0;
 						if (ClientStorage.regenSpeed + ClientStorage.regenModifier > 0) {

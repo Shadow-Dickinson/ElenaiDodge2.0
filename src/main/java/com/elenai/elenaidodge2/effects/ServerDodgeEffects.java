@@ -1,6 +1,7 @@
 package com.elenai.elenaidodge2.effects;
 
 import com.elenai.elenaidodge2.ModConfig;
+import com.elenai.elenaidodge2.api.DodgeEvent.Direction;
 import com.elenai.elenaidodge2.api.SpendFeatherEvent;
 import com.elenai.elenaidodge2.capability.absorption.AbsorptionProvider;
 import com.elenai.elenaidodge2.capability.absorption.IAbsorption;
@@ -13,6 +14,7 @@ import com.elenai.elenaidodge2.capability.particles.ParticlesProvider;
 import com.elenai.elenaidodge2.network.PacketHandler;
 import com.elenai.elenaidodge2.network.message.CParticleMessage;
 import com.elenai.elenaidodge2.util.PatronRewardHandler;
+import com.elenai.elenaidodge2.util.Utils;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
@@ -26,10 +28,16 @@ public class ServerDodgeEffects {
 	 * 
 	 * @side Server
 	 */
-	public static void run(EntityPlayerMP player) {
+	public static void run(EntityPlayerMP player, Direction direction) {
 
-		player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
-				SoundCategory.PLAYERS, 0.8f, 4f);
+		if (ModConfig.common.misc.enhancedDodgeEffects) {
+			float pitch = direction == Direction.BACK ? 2.5f : direction == Direction.FORWARD ? 3.2f : 2.9f;
+			player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+					SoundCategory.PLAYERS, 0.55f, pitch);
+		} else {
+			player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+					SoundCategory.PLAYERS, 0.8f, 4f);
+		}
 
 		IInvincibility i = player.getCapability(InvincibilityProvider.INVINCIBILITY_CAP, null);
 		i.set(ModConfig.common.balance.invincibilityTicks);
@@ -42,17 +50,17 @@ public class ServerDodgeEffects {
 		}
 		
 		if (ModConfig.common.misc.particles && PatronRewardHandler.getTier(player) <= 0) {
-		PacketHandler.instance.sendTo(new CParticleMessage(PatronRewardHandler.getTier(player),
-				player.posX, player.posY, player.posZ), (EntityPlayerMP) player);
-		PacketHandler.instance.sendToAllTracking(new CParticleMessage(PatronRewardHandler.getTier(player),
-				player.posX, player.posY, player.posZ), (EntityPlayerMP) player);
+			CParticleMessage message = ModConfig.common.misc.enhancedDodgeEffects
+					? new CParticleMessage(PatronRewardHandler.getTier(player), player.posX, player.posY, player.posZ,
+							direction, player.rotationYaw, player.onGround)
+					: new CParticleMessage(PatronRewardHandler.getTier(player), player.posX, player.posY, player.posZ);
+		PacketHandler.instance.sendTo(message, (EntityPlayerMP) player);
+		PacketHandler.instance.sendToAllTracking(message, (EntityPlayerMP) player);
 		}
 
-		SpendFeatherEvent event = new SpendFeatherEvent(ModConfig.common.feathers.cost, player);
+		int cost = player.onGround ? ModConfig.common.feathers.cost : ModConfig.common.feathers.airborneCost;
+		SpendFeatherEvent event = new SpendFeatherEvent(cost, player, direction);
 		if(!MinecraftForge.EVENT_BUS.post(event)) {
-			if(!player.onGround) {
-				event.setCost(ModConfig.common.feathers.airborneCost);
-			}
 		IAbsorption a = player.getCapability(AbsorptionProvider.ABSORPTION_CAP, null);
 		IDodges d = player.getCapability(DodgesProvider.DODGES_CAP, null);
 		if (!player.isCreative() && !player.isSpectator()) {
@@ -63,6 +71,14 @@ public class ServerDodgeEffects {
 			} else {
 				d.increase(a.getAbsorption() - event.getCost());
 				a.set(0);
+			}
+			if (d.getDodges() < 0) {
+				d.set(0);
+			} else {
+				int maxDodges = Utils.getMaxDodges(player);
+				if (d.getDodges() > maxDodges) {
+					d.set(maxDodges);
+				}
 			}
 		}
 		}

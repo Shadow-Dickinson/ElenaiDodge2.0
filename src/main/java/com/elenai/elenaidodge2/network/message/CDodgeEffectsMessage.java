@@ -1,10 +1,12 @@
 package com.elenai.elenaidodge2.network.message;
 
 import com.elenai.elenaidodge2.ElenaiDodge2;
+import com.elenai.elenaidodge2.api.DodgeEvent.Direction;
 import com.elenai.elenaidodge2.effects.ClientDodgeEffects;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -16,7 +18,8 @@ public class CDodgeEffectsMessage implements IMessage {
 	 * A Message to transfer server side values when the player dodges
 	 */
 
-	private int dodges, absorption;
+	private int entityId, dodges, absorption;
+	private String direction;
 
 	private boolean messageValid;
 
@@ -25,6 +28,12 @@ public class CDodgeEffectsMessage implements IMessage {
 	}
 
 	public CDodgeEffectsMessage(int dodges, int absorption) {
+		this(-1, Direction.FORWARD, dodges, absorption);
+	}
+
+	public CDodgeEffectsMessage(int entityId, Direction direction, int dodges, int absorption) {
+		this.entityId = entityId;
+		this.direction = direction.toString();
 		this.dodges = dodges;
 		this.absorption = absorption;
 
@@ -34,6 +43,8 @@ public class CDodgeEffectsMessage implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		try {
+			this.entityId = buf.readInt();
+			this.direction = ByteBufUtils.readUTF8String(buf);
 			this.dodges = buf.readInt();
 			this.absorption = buf.readInt();
 
@@ -49,6 +60,8 @@ public class CDodgeEffectsMessage implements IMessage {
 		if (!this.messageValid) {
 			return;
 		}
+		buf.writeInt(entityId);
+		ByteBufUtils.writeUTF8String(buf, direction);
 		buf.writeInt(dodges);
 		buf.writeInt(absorption);
 
@@ -67,7 +80,7 @@ public class CDodgeEffectsMessage implements IMessage {
 		}
 
 		void processMessage(CDodgeEffectsMessage message, MessageContext ctx) {
-				ClientDodgeEffects.run(message.dodges, message.absorption);
+				ClientDodgeEffects.run(message.entityId, Direction.valueOf(message.direction), message.dodges, message.absorption);
 		}
 	}
 }

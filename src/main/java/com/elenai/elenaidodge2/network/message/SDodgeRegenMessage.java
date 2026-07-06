@@ -3,6 +3,7 @@ package com.elenai.elenaidodge2.network.message;
 import com.elenai.elenaidodge2.ElenaiDodge2;
 import com.elenai.elenaidodge2.capability.dodges.DodgesProvider;
 import com.elenai.elenaidodge2.capability.dodges.IDodges;
+import com.elenai.elenaidodge2.util.Utils;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -61,8 +62,9 @@ public class SDodgeRegenMessage implements IMessage {
 		void processMessage(SDodgeRegenMessage message, MessageContext ctx) {;
 			EntityPlayerMP player = ctx.getServerHandler().player;
 			IDodges d = player.getCapability(DodgesProvider.DODGES_CAP, null);
-			if(d.getDodges() < 20) {
-			d.set(message.dodges);
+			int maxDodges = Utils.getMaxDodges(player);
+			if(d.getDodges() < maxDodges) {
+				d.set(Math.min(message.dodges, maxDodges));
 			}
 		}
 	}

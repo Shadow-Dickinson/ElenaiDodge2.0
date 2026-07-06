@@ -19,6 +19,14 @@ public class ClientStorage {
 	public static int weight = 0;
 	public static int regenSpeed;
 	public static int absorption = 0;
+	public static int maxDodges = 20;
 	public static boolean tanEnabled;
+	public static boolean enhancedDodgeEffects = true;
+	public static boolean dodgeAnimation = true;
+	public static int dodgeAnimationDuration = 16;
+	public static float dodgeAnimationIntensity = 1.0F;
+	public static boolean firstPersonDodgeAnimation = true;
+	public static boolean firstPersonCameraDodgeAnimation = true;
+	public static float firstPersonCameraIntensity = 0.8F;
 
 }

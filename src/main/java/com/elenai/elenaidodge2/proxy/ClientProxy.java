@@ -4,6 +4,7 @@ import com.elenai.elenaidodge2.ElenaiDodge2;
 import com.elenai.elenaidodge2.event.ArmorTickEventListener;
 import com.elenai.elenaidodge2.event.ClientTickEventListener;
 import com.elenai.elenaidodge2.event.CoreDodgeEventListener;
+import com.elenai.elenaidodge2.event.DodgeAnimationEventListener;
 import com.elenai.elenaidodge2.event.InputEventListener;
 import com.elenai.elenaidodge2.event.TooltipEventListener;
 import com.elenai.elenaidodge2.gui.DodgeGui;
@@ -37,6 +38,7 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new ArmorTickEventListener());
 		MinecraftForge.EVENT_BUS.register(new TooltipEventListener());
 		MinecraftForge.EVENT_BUS.register(new ClientTickEventListener());
+		MinecraftForge.EVENT_BUS.register(new DodgeAnimationEventListener());
 
 
 	}
