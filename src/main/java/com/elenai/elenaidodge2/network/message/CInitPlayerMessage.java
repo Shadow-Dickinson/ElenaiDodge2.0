@@ -18,7 +18,7 @@ public class CInitPlayerMessage implements IMessage {
 	 * A Message sent to the client when the player first joins the world.
 	 */
 
-	private int dodges;
+	private int dodges, maxDodges;
 
 	private boolean messageValid;
 
@@ -26,8 +26,9 @@ public class CInitPlayerMessage implements IMessage {
 		this.messageValid = false;
 	}
 
-	public CInitPlayerMessage(int dodges) {
+	public CInitPlayerMessage(int dodges, int maxDodges) {
 		this.dodges = dodges;
+		this.maxDodges = maxDodges;
 
 		this.messageValid = true;
 	}
@@ -36,6 +37,7 @@ public class CInitPlayerMessage implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		try {
 			this.dodges = buf.readInt();
+			this.maxDodges = buf.readInt();
 
 		} catch (IndexOutOfBoundsException ioe) {
 			ElenaiDodge2.LOG.error("Error occured whilst networking!", ioe);
@@ -50,6 +52,7 @@ public class CInitPlayerMessage implements IMessage {
 			return;
 		}
 		buf.writeInt(dodges);
+		buf.writeInt(maxDodges);
 
 	}
 
@@ -66,6 +69,7 @@ public class CInitPlayerMessage implements IMessage {
 		}
 
 		void processMessage(CInitPlayerMessage message, MessageContext ctx) {
+				ClientStorage.maxDodges = message.maxDodges;
 				ClientStorage.dodges = message.dodges;
 				if(ModConfig.client.hud.tutorial && !Loader.isModLoaded("reskillable")) {
 				ClientStorage.shownTutorial = false;

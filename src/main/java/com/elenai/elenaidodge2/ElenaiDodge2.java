@@ -3,6 +3,7 @@ package com.elenai.elenaidodge2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.elenai.elenaidodge2.command.CommandElenaiReload;
 import com.elenai.elenaidodge2.integration.ReskillableTraitDodge;
 import com.elenai.elenaidodge2.proxy.CommonProxy;
 
@@ -13,12 +14,13 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = ElenaiDodge2.MODID, name = ElenaiDodge2.NAME, version = ElenaiDodge2.VERSION, dependencies = "before:rustic;after:quark")
 public class ElenaiDodge2
 {
     public static final String MODID = "elenaidodge2";
-    public static final String NAME = "Elenai Dodge 2";
+    public static final String NAME = "Elenai Dodge 2 Extended";
     public static final String VERSION = "1.1.0";
     @Mod.Instance
 	public static ElenaiDodge2 INSTANCE;
@@ -47,6 +49,11 @@ public class ElenaiDodge2
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+	}
+
+	@EventHandler
+	public void serverStarting(FMLServerStartingEvent event) {
+		event.registerServerCommand(new CommandElenaiReload());
 	}
 
 }

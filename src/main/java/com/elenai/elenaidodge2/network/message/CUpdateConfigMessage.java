@@ -18,9 +18,10 @@ public class CUpdateConfigMessage implements IMessage {
 	 * A Message to transfer server side values from the Config.
 	 */
 
-	private int regenRate, dodges, absorption;
+	private int regenRate, dodges, absorption, maxDodges, dodgeAnimationDuration;
+	private float dodgeAnimationIntensity, firstPersonCameraIntensity;
 	private String weights;
-	private boolean half, tanEnabled;
+	private boolean half, tanEnabled, enhancedDodgeEffects, dodgeAnimation, firstPersonDodgeAnimation, firstPersonCameraDodgeAnimation;
 
 	private boolean messageValid;
 
@@ -28,13 +29,24 @@ public class CUpdateConfigMessage implements IMessage {
 		this.messageValid = false;
 	}
 
-	public CUpdateConfigMessage(int regenRate, int dodges, String weights, boolean half, int absorption, boolean tanEnabled) {
+	public CUpdateConfigMessage(int regenRate, int dodges, String weights, boolean half, int absorption, int maxDodges,
+			boolean tanEnabled, boolean enhancedDodgeEffects, boolean dodgeAnimation, int dodgeAnimationDuration,
+			float dodgeAnimationIntensity, boolean firstPersonDodgeAnimation, boolean firstPersonCameraDodgeAnimation,
+			float firstPersonCameraIntensity) {
 		this.regenRate = regenRate;
 		this.dodges = dodges;
 		this.weights = weights;
 		this.half = half;
 		this.absorption = absorption;
+		this.maxDodges = maxDodges;
 		this.tanEnabled = tanEnabled;
+		this.enhancedDodgeEffects = enhancedDodgeEffects;
+		this.dodgeAnimation = dodgeAnimation;
+		this.dodgeAnimationDuration = dodgeAnimationDuration;
+		this.dodgeAnimationIntensity = dodgeAnimationIntensity;
+		this.firstPersonDodgeAnimation = firstPersonDodgeAnimation;
+		this.firstPersonCameraDodgeAnimation = firstPersonCameraDodgeAnimation;
+		this.firstPersonCameraIntensity = firstPersonCameraIntensity;
 
 
 		this.messageValid = true;
@@ -48,7 +60,15 @@ public class CUpdateConfigMessage implements IMessage {
 			this.weights = ByteBufUtils.readUTF8String(buf);
 			this.half = buf.readBoolean();
 			this.absorption = buf.readInt();
+			this.maxDodges = buf.readInt();
 			this.tanEnabled = buf.readBoolean();
+			this.enhancedDodgeEffects = buf.readBoolean();
+			this.dodgeAnimation = buf.readBoolean();
+			this.dodgeAnimationDuration = buf.readInt();
+			this.dodgeAnimationIntensity = buf.readFloat();
+			this.firstPersonDodgeAnimation = buf.readBoolean();
+			this.firstPersonCameraDodgeAnimation = buf.readBoolean();
+			this.firstPersonCameraIntensity = buf.readFloat();
 
 
 		} catch (IndexOutOfBoundsException ioe) {
@@ -68,7 +88,15 @@ public class CUpdateConfigMessage implements IMessage {
 		ByteBufUtils.writeUTF8String(buf, weights);
 		buf.writeBoolean(half);
 		buf.writeInt(absorption);
+		buf.writeInt(maxDodges);
 		buf.writeBoolean(tanEnabled);
+		buf.writeBoolean(enhancedDodgeEffects);
+		buf.writeBoolean(dodgeAnimation);
+		buf.writeInt(dodgeAnimationDuration);
+		buf.writeFloat(dodgeAnimationIntensity);
+		buf.writeBoolean(firstPersonDodgeAnimation);
+		buf.writeBoolean(firstPersonCameraDodgeAnimation);
+		buf.writeFloat(firstPersonCameraIntensity);
 
 	}
 
@@ -86,6 +114,7 @@ public class CUpdateConfigMessage implements IMessage {
 
 		void processMessage(CUpdateConfigMessage message, MessageContext ctx) {
 			ClientStorage.regenSpeed = message.regenRate;
+			ClientStorage.maxDodges = message.maxDodges;
 
 			if (message.dodges != 9999) {
 				ClientStorage.dodges = message.dodges;
@@ -94,6 +123,13 @@ public class CUpdateConfigMessage implements IMessage {
 			ClientStorage.weightValues = message.weights;
 			ClientStorage.halfFeathers = message.half;
 			ClientStorage.tanEnabled = message.tanEnabled;
+			ClientStorage.enhancedDodgeEffects = message.enhancedDodgeEffects;
+			ClientStorage.dodgeAnimation = message.dodgeAnimation;
+			ClientStorage.dodgeAnimationDuration = message.dodgeAnimationDuration;
+			ClientStorage.dodgeAnimationIntensity = message.dodgeAnimationIntensity;
+			ClientStorage.firstPersonDodgeAnimation = message.firstPersonDodgeAnimation;
+			ClientStorage.firstPersonCameraDodgeAnimation = message.firstPersonCameraDodgeAnimation;
+			ClientStorage.firstPersonCameraIntensity = message.firstPersonCameraIntensity;
 			
 			// Forces Armor Refresh
 			ArmorTickEventListener.previousArmor.clear();
