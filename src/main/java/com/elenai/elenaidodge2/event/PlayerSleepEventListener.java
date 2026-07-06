@@ -4,6 +4,7 @@ import com.elenai.elenaidodge2.capability.dodges.DodgesProvider;
 import com.elenai.elenaidodge2.capability.dodges.IDodges;
 import com.elenai.elenaidodge2.network.PacketHandler;
 import com.elenai.elenaidodge2.network.message.CUpdateDodgeMessage;
+import com.elenai.elenaidodge2.util.Utils;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -17,7 +18,7 @@ public class PlayerSleepEventListener {
 		if (!event.getEntityPlayer().world.isRemote) {
 			if (event.getEntityPlayer().world.getWorldTime() == 24000) {
 				IDodges d = event.getEntityPlayer().getCapability(DodgesProvider.DODGES_CAP, null);
-				d.set(20);
+				d.set(Utils.getMaxDodges(event.getEntityPlayer()));
 				PacketHandler.instance.sendTo(new CUpdateDodgeMessage(d.getDodges()),
 						(EntityPlayerMP) event.getEntityPlayer());
 			}

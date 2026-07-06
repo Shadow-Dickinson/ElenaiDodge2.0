@@ -35,8 +35,9 @@ public class AbsorptionPotion extends Potion {
 		
 		if(entityLivingBaseIn instanceof EntityPlayerMP) {
 			IAbsorption a = entityLivingBaseIn.getCapability(AbsorptionProvider.ABSORPTION_CAP, null);
-			a.set((amplifier+1)*8);
-			PacketHandler.instance.sendTo(new CUpdateAbsorptionMessage((amplifier+1)*8), (EntityPlayerMP) entityLivingBaseIn);
+			int absorption = (amplifier + 1) * 20;
+			a.set(absorption);
+			PacketHandler.instance.sendTo(new CUpdateAbsorptionMessage(absorption), (EntityPlayerMP) entityLivingBaseIn);
 		}
 	}
 	

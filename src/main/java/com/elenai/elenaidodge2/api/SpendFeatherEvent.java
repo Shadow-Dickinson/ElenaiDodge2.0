@@ -1,5 +1,7 @@
 package com.elenai.elenaidodge2.api;
 
+import com.elenai.elenaidodge2.api.DodgeEvent.Direction;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -8,6 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 public class SpendFeatherEvent extends Event {
 
 	protected final EntityPlayer player;
+	protected final Direction direction;
 	protected int cost;
 
 	/**
@@ -17,8 +20,13 @@ public class SpendFeatherEvent extends Event {
 	 * @author Elenai
 	 */
 	public SpendFeatherEvent(int cost, EntityPlayer player) {
+		this(cost, player, null);
+	}
+
+	public SpendFeatherEvent(int cost, EntityPlayer player, Direction direction) {
 		this.cost = cost;
 		this.player = player;
+		this.direction = direction;
 	}
 		
 		/**
@@ -36,11 +44,19 @@ public class SpendFeatherEvent extends Event {
 			this.cost = cost;
 		}
 
+		public void addCost(int amount) {
+			this.cost += amount;
+		}
+
 		/**
 		 * @return Player Spending cost
 		 */
 		public EntityPlayer getPlayer() {
 			return player;
+		}
+
+		public Direction getDirection() {
+			return direction;
 		}
 	
 }

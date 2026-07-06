@@ -69,7 +69,7 @@ public class TooltipEventListener {
 			if(weight > 0) {
 			int len = (int) Math.ceil((double) weight / divisor);
 			
-			StringBuilder s = new StringBuilder("'");
+			StringBuilder s = new StringBuilder(" ");
 			for(int i = 0; i < len; i++)
 				s.append("  ");
 			

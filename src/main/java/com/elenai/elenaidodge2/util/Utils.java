@@ -4,6 +4,7 @@ import com.elenai.elenaidodge2.ElenaiDodge2;
 import com.elenai.elenaidodge2.ModConfig;
 import com.elenai.elenaidodge2.api.DodgeEvent;
 import com.elenai.elenaidodge2.api.DodgeEvent.Direction;
+import com.elenai.elenaidodge2.api.MaxFeathersEvent;
 import com.elenai.elenaidodge2.capability.absorption.AbsorptionProvider;
 import com.elenai.elenaidodge2.capability.absorption.IAbsorption;
 import com.elenai.elenaidodge2.capability.dodges.DodgesProvider;
@@ -24,9 +25,12 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 
 public class Utils {
@@ -99,10 +103,11 @@ public class Utils {
 			ElenaiDodge2.LOG.error("DodgeEvent Posted and Received but no direction given!");
 		}
 		setPlayerVelocity(motionX, ModConfig.common.balance.verticality, motionZ, player);
-		ServerDodgeEffects.run(player);
+		ServerDodgeEffects.run(player, direction);
 		IDodges d = player.getCapability(DodgesProvider.DODGES_CAP, null);
 		IAbsorption a = player.getCapability(AbsorptionProvider.ABSORPTION_CAP, null);
-		PacketHandler.instance.sendTo(new CDodgeEffectsMessage(d.getDodges(), a.getAbsorption()), (EntityPlayerMP) player);
+		PacketHandler.instance.sendTo(new CDodgeEffectsMessage(player.getEntityId(), direction, d.getDodges(), a.getAbsorption()), (EntityPlayerMP) player);
+		PacketHandler.instance.sendToAllTracking(new CDodgeEffectsMessage(player.getEntityId(), direction, -1, 0), (EntityPlayerMP) player);
 	}
 	
 	/**
@@ -123,9 +128,10 @@ public class Utils {
 	 * @param player
 	 */
 	public static void initPlayer(EntityPlayer player) {
-		PacketHandler.instance.sendTo(new CInitPlayerMessage(20), (EntityPlayerMP) player);
+		int maxDodges = getMaxDodges(player);
+		PacketHandler.instance.sendTo(new CInitPlayerMessage(maxDodges, maxDodges), (EntityPlayerMP) player);
 		IDodges d = player.getCapability(DodgesProvider.DODGES_CAP, null);
-		d.set(20);
+		d.set(maxDodges);
 	}
 	
 	/**
@@ -137,7 +143,10 @@ public class Utils {
 		IDodges d = player.getCapability(DodgesProvider.DODGES_CAP, null);
 		IAbsorption a = player.getCapability(AbsorptionProvider.ABSORPTION_CAP, null);
 		PacketHandler.instance.sendTo(new CUpdateConfigMessage(ModConfig.common.feathers.rate, d.getDodges(), arrayToString(ModConfig.common.weights.weights),
-				ModConfig.common.feathers.half, a.getAbsorption(), ModConfig.common.integration.toughAsNails.enabled), player);
+				ModConfig.common.feathers.half, a.getAbsorption(), getMaxDodges(player), ModConfig.common.integration.toughAsNails.enabled,
+				ModConfig.common.misc.enhancedDodgeEffects, ModConfig.common.misc.dodgeAnimation, ModConfig.common.misc.dodgeAnimationDuration,
+				(float) ModConfig.common.misc.dodgeAnimationIntensity, ModConfig.common.misc.firstPersonDodgeAnimation,
+				ModConfig.common.misc.firstPersonCameraDodgeAnimation, (float) ModConfig.common.misc.firstPersonCameraIntensity), player);
 	}
 	
 	/**
@@ -145,8 +154,35 @@ public class Utils {
 	 * @author Elenai
 	 */
 	public static void updateClientConfig() {
+		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+		if (server != null && server.getPlayerList() != null) {
+			for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
+				updateClientConfig(player);
+			}
+			return;
+		}
 		PacketHandler.instance.sendToAll(new CUpdateConfigMessage(ModConfig.common.feathers.rate, 9999, arrayToString(ModConfig.common.weights.weights),
-				ModConfig.common.feathers.half, 9999, ModConfig.common.integration.toughAsNails.enabled));
+				ModConfig.common.feathers.half, 9999, getMaxDodges(), ModConfig.common.integration.toughAsNails.enabled,
+				ModConfig.common.misc.enhancedDodgeEffects, ModConfig.common.misc.dodgeAnimation, ModConfig.common.misc.dodgeAnimationDuration,
+				(float) ModConfig.common.misc.dodgeAnimationIntensity, ModConfig.common.misc.firstPersonDodgeAnimation,
+				ModConfig.common.misc.firstPersonCameraDodgeAnimation, (float) ModConfig.common.misc.firstPersonCameraIntensity));
+	}
+
+	public static int getMaxDodges() {
+		return Math.max(1, ModConfig.common.feathers.maximum);
+	}
+
+	public static int getBaseDodges() {
+		return Math.max(1, Math.min(ModConfig.common.feathers.base, getMaxDodges()));
+	}
+
+	public static int getMaxDodges(EntityPlayer player) {
+		if (player == null) {
+			return getBaseDodges();
+		}
+		MaxFeathersEvent event = new MaxFeathersEvent(player, getBaseDodges(), getMaxDodges());
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getMaximum();
 	}
 	
 	/**

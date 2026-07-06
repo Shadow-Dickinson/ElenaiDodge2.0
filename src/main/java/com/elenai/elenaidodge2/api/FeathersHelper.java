@@ -21,7 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class FeathersHelper {
 
 	/**
-	 * Returns the amount of feathers the player has on the server out of 20.
+	 * Returns the amount of half feathers the player has on the server.
 	 * 
 	 * @author Elenai
 	 * @param player
@@ -33,7 +33,7 @@ public class FeathersHelper {
 	}
 
 	/**
-	 * Returns the amount of feathers the player has on the client out of 20.
+	 * Returns the amount of half feathers the player has on the client.
 	 * 
 	 * @author Elenai
 	 * @param player
@@ -43,20 +43,37 @@ public class FeathersHelper {
 		return ClientStorage.dodges;
 	}
 
+	public static int getMaxFeatherLevel(EntityPlayerMP player) {
+		return Utils.getMaxDodges(player);
+	}
+
+	public static int getMaxFeatherLevel(EntityPlayerSP player) {
+		return ClientStorage.maxDodges;
+	}
+
+	public static int getBaseMaxFeatherLevel() {
+		return Utils.getBaseDodges();
+	}
+
+	public static int getAbsoluteMaxFeatherLevel() {
+		return Utils.getMaxDodges();
+	}
+
 	/**
 	 * Increases the player's feathers by the specified amount. (Unless the feather
-	 * bar would be full, in which case set to 20)
+	 * bar would be full, in which case set to the configured maximum)
 	 * 
 	 * @param player
 	 * @param amount
 	 */
 	public static void increaseFeathers(EntityPlayerMP player, int amount) {
 		IDodges d = player.getCapability(DodgesProvider.DODGES_CAP, null);
+		int maxDodges = Utils.getMaxDodges(player);
 
-			if (d.getDodges() + amount <= 20) {
+			if (d.getDodges() + amount <= maxDodges) {
 				d.increase(amount);
 			} else {
-				d.set(20);
+				d.set(maxDodges);
 			}
 			PacketHandler.instance.sendTo(new CUpdateDodgeMessage(d.getDodges()), player);
 			Utils.showDodgeBar();
@@ -87,10 +104,32 @@ public class FeathersHelper {
 		}
 		if(d.getDodges() < 0) {
 			d.set(0);
+		} else {
+			int maxDodges = Utils.getMaxDodges(player);
+			if (d.getDodges() > maxDodges) {
+				d.set(maxDodges);
+			}
 		}
 		PacketHandler.instance.sendTo(new CUpdateDodgeMessage(d.getDodges()), player);
 		Utils.showDodgeBar();
 		}
+	}
+
+	public static void syncMaxFeathers(EntityPlayerMP player) {
+		IDodges d = player.getCapability(DodgesProvider.DODGES_CAP, null);
+		int maxDodges = Utils.getMaxDodges(player);
+		if (d.getDodges() > maxDodges) {
+			d.set(maxDodges);
+			PacketHandler.instance.sendTo(new CUpdateDodgeMessage(d.getDodges()), player);
+		}
+		Utils.updateClientConfig(player);
+	}
+
+	public static void fillFeathers(EntityPlayerMP player) {
+		IDodges d = player.getCapability(DodgesProvider.DODGES_CAP, null);
+		d.set(Utils.getMaxDodges(player));
+		PacketHandler.instance.sendTo(new CUpdateDodgeMessage(d.getDodges()), player);
+		Utils.updateClientConfig(player);
 	}
 	
 	/**

@@ -103,8 +103,7 @@ public class ServerDodgeEventListener {
 
 		if (!MinecraftForge.EVENT_BUS.post(cfe)) {
 			IWeight w = player.getCapability(WeightProvider.WEIGHT_CAP, null);
-			if ((w.getWeight() > 0) && (d.getDodges() - dodgeCost < w.getWeight()
-					&& a.getAbsorption() - dodgeCost < 0)) {
+			if ((w.getWeight() > 0) && (d.getDodges() + a.getAbsorption() - dodgeCost < w.getWeight())) {
 				Utils.cancelledByFeathers(player);
 				event.setCanceled(true);
 			}

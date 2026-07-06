@@ -21,6 +21,21 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class DodgeGui {
 
+	private static final int UNITS_PER_LAYER = 20;
+	private static final int FEATHER_SLOTS = 10;
+	private static final float[][] FEATHER_LAYER_COLORS = {
+			{ 1.0F, 0.0F, 0.0F },
+			{ 1.0F, 0.38F, 0.0F },
+			{ 1.0F, 0.95F, 0.0F },
+			{ 0.0F, 1.0F, 0.0F },
+			{ 1.0F, 1.0F, 1.0F } };
+	private static final float[][] ABSORPTION_LAYER_COLORS = {
+			{ 1.0F, 0.0F, 0.0F },
+			{ 1.0F, 0.38F, 0.0F },
+			{ 1.0F, 0.95F, 0.0F },
+			{ 0.0F, 1.0F, 0.0F },
+			{ 1.0F, 1.0F, 1.0F } };
+
 	public static ResourceLocation DODGE_ICONS = new ResourceLocation(ElenaiDodge2.MODID, "textures/gui/icons.png");
 	public static ResourceLocation ADVANCED_DODGE_ICONS = new ResourceLocation(ElenaiDodge2.MODID,
 			"textures/gui/advanced_icons.png");
@@ -59,8 +74,9 @@ public class DodgeGui {
 			int noFeather, int halfFeather, int fullFeather, int armoredFeather, int halfArmoredFeather,
 			int halfMixedFeather, int mixedFeather, int patronLevel) {
 		GuiIngame gui = Minecraft.getMinecraft().ingameGUI;
+		ResourceLocation texture = DODGE_ICONS;
 		if (patronLevel > 4 && patronLevel != 99) {
-			Minecraft.getMinecraft().getTextureManager().bindTexture(ADVANCED_DODGE_ICONS);
+			texture = ADVANCED_DODGE_ICONS;
 			patronLevel -= 5;
 			patronLevel *= 9;
 		} else if (patronLevel > 0 && patronLevel != 99) {
@@ -73,79 +89,86 @@ public class DodgeGui {
 			patronLevel *= 9;
 		}
 
-		int rows = MathHelper.ceil(dodges / 20.0F);
-		if (rows <= 0) {
-			rows = 1;
-		}
-		int rowHeight = Math.min(Math.max(10 - (rows - 2), 3), 10);
-		int top = (screenHeight - GuiIngameForge.right_height) - ((rows * rowHeight) - 10) + ModConfig.client.hud.yOffset;
-
-		for (int i = rows - 1; i >= 0; i--) {
-			int right = (screenWidth / 2 + 82) + ModConfig.client.hud.xOffset;
-			for (int j = 1; j < 20; j += 2) {
-
-				if (j + (i * 20) < dodges) {
-					if (j + (i * 20) > weight) {
-						gui.drawTexturedModalRect(right, top, fullFeather, patronLevel, 9, 9);
-					} else if (j + (i * 20) == weight) {
-						gui.drawTexturedModalRect(right, top, mixedFeather, patronLevel, 9, 9);
-					} else {
-						gui.drawTexturedModalRect(right, top, armoredFeather, patronLevel, 9, 9);
-					}
-
-				} else if (j + (i * 20) == dodges) {
-					if (j + (i * 20) > weight) {
-						gui.drawTexturedModalRect(right, top, halfFeather, patronLevel, 9, 9);
-					} else if (j + (i * 20) == weight) {
-						gui.drawTexturedModalRect(right, top, halfMixedFeather, patronLevel, 9, 9);
-					} else {
-						gui.drawTexturedModalRect(right, top, halfArmoredFeather, patronLevel, 9, 9);
-					}
-
-				} else if (j + (i * 20) > dodges) {
-					gui.drawTexturedModalRect(right, top, noFeather, patronLevel, 9, 9);
-				}
-
-				if (healing) {
-					gui.drawTexturedModalRect(right, top, 16, 9, 9, 9);
-				} else if (ClientStorage.failed && ModConfig.client.hud.flash) {
-					gui.drawTexturedModalRect(right, top, 43, 9, 9, 9);
-				}
-
-				right -= 8;
-			}
-			top += rowHeight;
-			GuiIngameForge.right_height += rowHeight;
-		}
-		if (rowHeight < 10) {
-			GuiIngameForge.right_height += (10 - rowHeight);
-		}
+		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
+		int visibleDodges = Math.max(0, dodges - Math.max(0, weight));
+		int top = screenHeight - GuiIngameForge.right_height + ModConfig.client.hud.yOffset;
+		renderLayeredBar(gui, screenWidth, top, visibleDodges, patronLevel, noFeather, halfFeather, fullFeather,
+				halfArmoredFeather, armoredFeather, FEATHER_LAYER_COLORS, healing, ClientStorage.failed, true);
+		GuiIngameForge.right_height += 10;
 	}
 
 	public static void renderAbsorptionFeathers(int screenHeight, int screenWidth, int dodges, int weight,
 			boolean healing, int halfFeather, int fullFeather) {
-		GuiIngame gui = Minecraft.getMinecraft().ingameGUI;
-
-		int rows = MathHelper.ceil(dodges / 20.0F);
-		int rowHeight = Math.min(Math.max(10 - (rows - 2), 3), 10);
-		int top = (screenHeight - GuiIngameForge.right_height) - ((rows * rowHeight) - 10) + ModConfig.client.hud.yOffset;
-
-		for (int i = rows - 1; i >= 0; i--) {
-			int right = (screenWidth / 2 + 82) + ModConfig.client.hud.xOffset;
-			for (int j = 1; j < 20; j += 2) {
-
-				if (j + (i * 20) < dodges) {
-					gui.drawTexturedModalRect(right, top, fullFeather, 0, 9, 9);
-				} else if (j + (i * 20) == dodges) {
-					gui.drawTexturedModalRect(right, top, halfFeather, 0, 9, 9);
-				}
-				right -= 8;
-			}
-			top += rowHeight;
-			GuiIngameForge.right_height += rowHeight;
+		if (dodges <= 0) {
+			return;
 		}
-		if (rowHeight < 10) {
-			GuiIngameForge.right_height += (10 - rowHeight);
+		GuiIngame gui = Minecraft.getMinecraft().ingameGUI;
+		Minecraft.getMinecraft().getTextureManager().bindTexture(DODGE_ICONS);
+		int uncoveredWeight = Math.max(0, weight - ClientStorage.dodges);
+		int visibleAbsorption = Math.max(0, dodges - uncoveredWeight);
+		if (visibleAbsorption <= 0) {
+			return;
+		}
+		int top = screenHeight - GuiIngameForge.right_height + ModConfig.client.hud.yOffset;
+		renderLayeredBar(gui, screenWidth, top, visibleAbsorption, 0, 16, halfFeather, fullFeather, 52, 43,
+				ABSORPTION_LAYER_COLORS, healing, false, false);
+		GuiIngameForge.right_height += 10;
+	}
+
+	private static void renderLayeredBar(GuiIngame gui, int screenWidth, int top, int amount, int textureY,
+			int emptyU, int halfU, int fullU, int layerHalfU, int layerFullU, float[][] colors, boolean healing,
+			boolean failed, boolean drawEmptySlots) {
+		int right = (screenWidth / 2 + 82) + ModConfig.client.hud.xOffset;
+		if (drawEmptySlots) {
+			for (int slot = 0; slot < FEATHER_SLOTS; slot++) {
+				gui.drawTexturedModalRect(right - (slot * 8), top, emptyU, textureY, 9, 9);
+			}
+		}
+
+		int layers = MathHelper.ceil(amount / (float) UNITS_PER_LAYER);
+		for (int slot = 0; slot < FEATHER_SLOTS; slot++) {
+			int x = right - (slot * 8);
+			int unit = (slot * 2) + 1;
+			int visibleLayer = -1;
+			int visibleLayerAmount = 0;
+			boolean half = false;
+
+			for (int layer = 0; layer < layers; layer++) {
+				int layerAmount = MathHelper.clamp(amount - (layer * UNITS_PER_LAYER), 0, UNITS_PER_LAYER);
+				if (unit < layerAmount) {
+					visibleLayer = layer;
+					visibleLayerAmount = layerAmount;
+					half = false;
+				} else if (unit == layerAmount) {
+					visibleLayer = layer;
+					visibleLayerAmount = layerAmount;
+					half = true;
+				}
+			}
+
+			if (visibleLayer < 0 || visibleLayerAmount <= 0) {
+				continue;
+			}
+
+			float[] color = colors[visibleLayer % colors.length];
+			boolean useBaseSprite = visibleLayer % colors.length == colors.length - 1;
+			GlStateManager.color(color[0], color[1], color[2], alpha);
+			gui.drawTexturedModalRect(x, top, useBaseSprite ? (half ? halfU : fullU) : (half ? layerHalfU : layerFullU),
+					textureY, 9, 9);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
+		}
+
+		for (int slot = 0; slot < FEATHER_SLOTS; slot++) {
+			int x = right - (slot * 8);
+			if (!drawEmptySlots && amount <= slot * 2) {
+				continue;
+			}
+
+			if (healing) {
+				gui.drawTexturedModalRect(x, top, 16, 9, 9, 9);
+			} else if (failed && ModConfig.client.hud.flash) {
+				gui.drawTexturedModalRect(x, top, 43, 9, 9, 9);
+			}
 		}
 	}
 

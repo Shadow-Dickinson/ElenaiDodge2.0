@@ -33,6 +33,19 @@ public class ModConfig {
 			public boolean doubleTapForwards = false;
 		}
 
+		public Animation animation = new Animation();
+
+		public class Animation {
+			@Name("Enable Dodge Animation")
+			@Comment("Whether to animate the player model when dodging.")
+			public boolean enabled = true;
+
+			@Name("Animation Duration")
+			@Comment("How many ticks the dodge animation lasts.")
+			@RangeInt(min = 1, max = 40)
+			public int duration = 16;
+		}
+
 		public Hud hud = new Hud();
 
 		public class Hud {
@@ -127,14 +140,24 @@ public class ModConfig {
 
 		public class Feathers {
 
+			@Name("Maximum Feathers")
+			@Comment("The upper limit for half feathers. 20 half feathers equals 10 full feathers.")
+			@RangeInt(min = 1, max = Integer.MAX_VALUE)
+			public int maximum = 100;
+
+			@Name("Base Feathers")
+			@Comment("The default half feathers for players. 20 half feathers equals 10 full feathers.")
+			@RangeInt(min = 1, max = Integer.MAX_VALUE)
+			public int base = 20;
+
 			@Name("Cost")
 			@Comment("How many half feathers dodging requires.")
-			@RangeInt(min = 0, max = 20)
+			@RangeInt(min = 0, max = Integer.MAX_VALUE)
 			public int cost = 2;
-			
+
 			@Name("Airborne Cost")
 			@Comment("How many half feathers dodging midair requires. [Dodge Whilst Airborne must be Enabled]")
-			@RangeInt(min = 0, max = 20)
+			@RangeInt(min = 0, max = Integer.MAX_VALUE)
 			public int airborneCost = 4;
 
 			@Name("Regeneration Rate")
@@ -300,6 +323,37 @@ public class ModConfig {
 			@Name("Enable Particles")
 			@Comment("Whether the Player's dodge creates a puff of smoke.")
 			public boolean particles = true;
+
+			@Name("Enhanced Dodge Effects")
+			@Comment("Whether dodges use directional smoke and tuned dodge sounds.")
+			public boolean enhancedDodgeEffects = true;
+
+			@Name("Dodge Animation")
+			@Comment("Whether players are visually animated when dodging.")
+			public boolean dodgeAnimation = true;
+
+			@Name("Dodge Animation Duration")
+			@Comment("How many ticks the dodge animation lasts.")
+			@RangeInt(min = 1, max = 40)
+			public int dodgeAnimationDuration = 16;
+
+			@Name("Dodge Animation Intensity")
+			@Comment("Visual strength of the dodge animation.")
+			@RangeDouble(min = 0.0, max = 2.0)
+			public double dodgeAnimationIntensity = 1.0;
+
+			@Name("First Person Dodge Animation")
+			@Comment("Whether dodges move the held item in first person.")
+			public boolean firstPersonDodgeAnimation = true;
+
+			@Name("First Person Camera Dodge Animation")
+			@Comment("Whether dodges tilt the camera in first person.")
+			public boolean firstPersonCameraDodgeAnimation = true;
+
+			@Name("First Person Camera Intensity")
+			@Comment("Visual strength of the first person camera dodge animation.")
+			@RangeDouble(min = 0.0, max = 2.0)
+			public double firstPersonCameraIntensity = 0.8;
 		}
 		
 		public Integration integration = new Integration();
