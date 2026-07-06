@@ -1,0 +1,26 @@
+Elenai Dodge 2 Extended notice
+
+This project is an unofficial extended fork of Elenai Dodge 2 for Minecraft 1.12.2.
+
+Original project:
+https://github.com/ElenaiDev/ElenaiDodge2.0
+
+Original CurseForge project:
+https://www.curseforge.com/minecraft/mc-mods/elenai-dodge-2
+
+Original author:
+Elenai
+
+Fork modifications:
+Shadow-Dickinson
+
+The original Elenai Dodge 2 project declares the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License in its README. This fork follows the same license for the Elenai Dodge 2 derived work.
+
+License:
+https://creativecommons.org/licenses/by-nc-sa/3.0/
+
+This fork is not an official release by Elenai and does not imply endorsement by the original author.
+
+Changes were made from the original Minecraft 1.12.2 source. Main fork changes include expanded feather stamina, layered HUD rendering, scalable Feathery absorption, server-controlled dodge visuals, first-person camera roll, runtime config reload, updated GUI assets, and additional public integration hooks.
+
+The LICENSE.txt, LICENSE-Paulscode IBXM Library.txt, and LICENSE-Paulscode SoundSystem CodecIBXM.txt files preserve third-party license notices that were already present in the Minecraft 1.12.2 source tree. Minecraft Forge, Minecraft Coder Pack, Paulscode IBXM, SoundSystem CodecIBXM, and other third-party components remain under their respective licenses and notices.

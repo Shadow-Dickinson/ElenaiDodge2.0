@@ -1,14 +1,14 @@
 [
 {
   "modid": "elenaidodge2",
-  "name": "Elenai Dodge 2",
-  "description": "Welcome to Elenai Dodge 2! Elenai Dodge 2 is a dodging mod that focuses on overhauling the combat of the vanilla game. A MASSIVE thanks to my Patrons: SandwichHorror, Brent, DevilDogHons, Ethan McGowen (ArtyArtyArtemis)",
-  "version": "1.1.0",
+  "name": "Elenai Dodge 2 Extended",
+  "description": "An extended fork of Elenai Dodge 2 for Minecraft 1.12.2 with expanded feather stamina, layered feather colors, scalable Feathery absorption, and integration hooks for RPG-style race and class systems.",
+  "version": "${version}",
   "mcversion": "1.12.2",
-  "url": "https://www.curseforge.com/minecraft/mc-mods/elenai-dodge-2",
+  "url": "",
   "updateUrl": "",
-  "authorList": ["Elenai"],
-  "credits": "Elenai",
+  "authorList": ["Elenai", "Shadow-Dickinson"],
+  "credits": "Original mod by Elenai. Extended fork by Shadow-Dickinson.",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

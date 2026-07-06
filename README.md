@@ -1,50 +1,64 @@
-# Elenai Dodge 2
+<p align="center">
+  <img src="docs/assets/Logo.png" alt="Elenai Dodge 2 Extended logo" width="160">
+</p>
 
-Elenai Dodge 2 is a dodging mod that serves as an API for all my future projects
+<h1 align="center">Elenai Dodge 2 Extended</h1>
 
-## Installation
+<p align="center">
+  Unofficial extended fork of Elenai Dodge 2 for Minecraft Forge 1.12.2.
+</p>
 
-Simply drag and drop the mod downloaded from the files section [here](https://www.curseforge.com/minecraft/mc-mods/elenai-dodge-2/files) into your mods folder after installing [Minecraft Forge](files.minecraftforge.net).
-The mods folder is located at  ```%appdata%/.minecraft/mods```.
+<p align="center">
+  <img src="https://img.shields.io/badge/Minecraft-1.12.2-green?style=for-the-badge" alt="Minecraft 1.12.2">
+  <img src="https://img.shields.io/badge/Forge-14.23.5.2847-orange?style=for-the-badge" alt="Forge 14.23.5.2847">
+  <img src="https://img.shields.io/badge/Java-8-blue?style=for-the-badge" alt="Java 8">
+  <img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%203.0-blue?style=for-the-badge" alt="License CC BY-NC-SA 3.0">
+  <img src="https://img.shields.io/badge/Status-Extended-purple?style=for-the-badge" alt="Status Extended">
+</p>
 
-## User Information
-For more information on the project, please refer to the [Wiki](https://github.com/ElenaiDev/ElenaiDodge2.0/wiki).
+## About
 
+This fork expands the original Minecraft 1.12.2 release with higher feather stamina, layered HUD feedback, server-side controls, lightweight dodge animations, and integration hooks for RPG-style systems.
 
-## Developer Information
+It is intended for players, modpacks, and servers that still target Minecraft 1.12.2 and want an extended version of the original dodge system without moving to newer Minecraft versions.
 
-Adding support to Elenai Dodge 2 is easy. To import it, simply add this line to your ```build.gradle``` file's ```repositories```.
+This fork targets Minecraft 1.12.2 only. It is not intended to replace or backport the newer official Elenai Dodge 2 releases for later Minecraft versions. Future changes, if any, are planned to remain focused on Minecraft 1.12.2.
 
-```gradle
-repositories {
-     maven { url "https://www.cursemaven.com" }
-}
-```
-And this to your project's dependencies.
-```gradle
-dependencies {
-	compile fg.deobf("curse.maven:elenaidodge2-442962:FILE_VERSION") 
-}
-```
-Where ```FILE_VERSION``` is the file ID of the version you want to use. You can find this by opening the URL of an Elenai Dodge 2 file download such as [this one](https://www.curseforge.com/minecraft/mc-mods/elenai-dodge-2/files/3215435) and looking at the url. The numbers at the end are the file ID.
+## Requirements
 
-### Example
-```gradle
-dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.4-35.1.37'
-	compile fg.deobf("curse.maven:elenaidodge2-442962:3215435") 
-}
-```
+- Minecraft 1.12.2
+- Minecraft Forge 14.23.5.2847 or compatible 1.12.2 environment
+- Java 8
 
-Then simply run your gradle setup commands as normal, e.g. ```gradlew genEclipseRuns``` then ```gradlew eclipse```.
+## Highlights
 
-You now have access to Elenai Dodge 2's API and code! The API is pretty self explanatory but if you need any help, feel free to private message me [here](https://www.curseforge.com/members/elenaidev/followers)!
+- Configurable base and maximum feather values.
+- Layered feather rendering for higher stamina values.
+- Feathery absorption scaling by potion level.
+- Improved absorption feather display.
+- Server-controlled dodge animations built with Minecraft Forge 1.12.2 client rendering hooks.
+- First-person camera roll, particles, and sound tuning.
+- Runtime server config reload with `/elenaiReload`.
+- Updated feather GUI textures.
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+## Integration Hooks
 
-Please make sure to update tests as appropriate.
+The fork exposes hooks that other mods can use to adjust a player's effective feather limit and dodge cost. This is intended for RPG, race, class, attribute, equipment, or progression systems that need to influence dodge stamina without hardcoding those rules into this mod.
+
+## Compatibility
+
+The mod keeps the original `elenaidodge2` mod id for compatibility with existing registries, assets, potion IDs, and integration points.
+
+## Credits
+
+Original Elenai Dodge 2 mod by Elenai: https://github.com/ElenaiDev/ElenaiDodge2.0
+
+Extended fork modifications by Shadow-Dickinson.
+
+This fork is based on Elenai Dodge 2 for Minecraft 1.12.2. Changes were made to gameplay, HUD rendering, configuration sync, animation, assets, and integration hooks. This project is not an official release by Elenai and does not imply endorsement by the original author.
 
 ## License
-[Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License](https://creativecommons.org/licenses/by-nc-sa/3.0/)
 
+This fork follows the license declared by the original project README: Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+
+The `LICENSE.txt`, `LICENSE-Paulscode IBXM Library.txt`, and `LICENSE-Paulscode SoundSystem CodecIBXM.txt` files preserve third-party license notices that were already present in the Minecraft 1.12.2 source tree. See `NOTICE.txt` for fork attribution, modification notes, and license details.
