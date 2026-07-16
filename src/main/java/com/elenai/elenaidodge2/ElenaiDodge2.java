@@ -21,7 +21,7 @@ public class ElenaiDodge2
 {
     public static final String MODID = "elenaidodge2";
     public static final String NAME = "Elenai Dodge 2 Extended";
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = "1.1.1";
     @Mod.Instance
 	public static ElenaiDodge2 INSTANCE;
 
@@ -39,7 +39,7 @@ public class ElenaiDodge2
 	public void init(FMLInitializationEvent event) {
 		proxy.init(event);
 
-		if (Loader.isModLoaded("reskillable")) {
+		if (Loader.isModLoaded("reskillable") && ModConfig.common.integration.reskillable.enabled) {
 			codersafterdark.reskillable.api.ReskillableRegistries.UNLOCKABLES.register(
                 new ReskillableTraitDodge()
         );

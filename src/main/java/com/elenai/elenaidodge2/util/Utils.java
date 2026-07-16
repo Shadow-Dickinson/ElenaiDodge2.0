@@ -144,7 +144,7 @@ public class Utils {
 		IAbsorption a = player.getCapability(AbsorptionProvider.ABSORPTION_CAP, null);
 		PacketHandler.instance.sendTo(new CUpdateConfigMessage(ModConfig.common.feathers.rate, d.getDodges(), arrayToString(ModConfig.common.weights.weights),
 				ModConfig.common.feathers.half, a.getAbsorption(), getMaxDodges(player), ModConfig.common.integration.toughAsNails.enabled,
-				ModConfig.common.misc.enhancedDodgeEffects, ModConfig.common.misc.dodgeAnimation, ModConfig.common.misc.dodgeAnimationDuration,
+				ModConfig.common.integration.reskillable.enabled, ModConfig.common.misc.enhancedDodgeEffects, ModConfig.common.misc.dodgeAnimation, ModConfig.common.misc.dodgeAnimationDuration,
 				(float) ModConfig.common.misc.dodgeAnimationIntensity, ModConfig.common.misc.firstPersonDodgeAnimation,
 				ModConfig.common.misc.firstPersonCameraDodgeAnimation, (float) ModConfig.common.misc.firstPersonCameraIntensity), player);
 	}
@@ -163,7 +163,7 @@ public class Utils {
 		}
 		PacketHandler.instance.sendToAll(new CUpdateConfigMessage(ModConfig.common.feathers.rate, 9999, arrayToString(ModConfig.common.weights.weights),
 				ModConfig.common.feathers.half, 9999, getMaxDodges(), ModConfig.common.integration.toughAsNails.enabled,
-				ModConfig.common.misc.enhancedDodgeEffects, ModConfig.common.misc.dodgeAnimation, ModConfig.common.misc.dodgeAnimationDuration,
+				ModConfig.common.integration.reskillable.enabled, ModConfig.common.misc.enhancedDodgeEffects, ModConfig.common.misc.dodgeAnimation, ModConfig.common.misc.dodgeAnimationDuration,
 				(float) ModConfig.common.misc.dodgeAnimationIntensity, ModConfig.common.misc.firstPersonDodgeAnimation,
 				ModConfig.common.misc.firstPersonCameraDodgeAnimation, (float) ModConfig.common.misc.firstPersonCameraIntensity));
 	}
@@ -254,14 +254,26 @@ public class Utils {
 	 * @author Elenai
 	 */
 	public static boolean dodgeTraitUnlocked(EntityPlayer player) {
-		if (Loader.isModLoaded("reskillable")) {
+		if (Loader.isModLoaded("reskillable") && isReskillableIntegrationEnabled(player)) {
+			codersafterdark.reskillable.api.skill.Skill agility = codersafterdark.reskillable.api.ReskillableRegistries.SKILLS
+					.getValue(new ResourceLocation(codersafterdark.reskillable.lib.LibMisc.MOD_ID, "agility"));
+			codersafterdark.reskillable.api.unlockable.Unlockable dodge = codersafterdark.reskillable.api.ReskillableRegistries.UNLOCKABLES
+					.getValue(new ResourceLocation(ElenaiDodge2.MODID, "dodge"));
+			if (agility == null || dodge == null) {
+				return true;
+			}
 			return (codersafterdark.reskillable.api.data.PlayerDataHandler.get(player)
-					.getSkillInfo(codersafterdark.reskillable.api.ReskillableRegistries.SKILLS
-							.getValue(new ResourceLocation(codersafterdark.reskillable.lib.LibMisc.MOD_ID, "agility")))
-					.isUnlocked(codersafterdark.reskillable.api.ReskillableRegistries.UNLOCKABLES
-							.getValue(new ResourceLocation(ElenaiDodge2.MODID, "dodge"))));
+					.getSkillInfo(agility)
+					.isUnlocked(dodge));
 		}
 		return true;
+	}
+
+	public static boolean isReskillableIntegrationEnabled(EntityPlayer player) {
+		if (player != null && player.world != null && player.world.isRemote) {
+			return ClientStorage.reskillableEnabled;
+		}
+		return ModConfig.common.integration.reskillable.enabled;
 	}
 	
 	/**

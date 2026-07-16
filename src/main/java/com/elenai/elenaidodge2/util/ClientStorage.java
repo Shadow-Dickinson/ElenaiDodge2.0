@@ -21,6 +21,7 @@ public class ClientStorage {
 	public static int absorption = 0;
 	public static int maxDodges = 20;
 	public static boolean tanEnabled;
+	public static boolean reskillableEnabled = true;
 	public static boolean enhancedDodgeEffects = true;
 	public static boolean dodgeAnimation = true;
 	public static int dodgeAnimationDuration = 16;

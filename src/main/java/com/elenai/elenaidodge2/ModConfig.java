@@ -359,7 +359,14 @@ public class ModConfig {
 		public Integration integration = new Integration();
 
 		public class Integration {
+			public Reskillable reskillable = new Reskillable();
 			public ToughAsNails toughAsNails = new ToughAsNails();
+
+			public class Reskillable {
+			@Name("Enabled")
+			@Comment("Whether dodging requires the Reskillable Dodge trait when Reskillable is installed.")
+			public boolean enabled = true;
+			}
 
 			public class ToughAsNails {
 			@Name("Exhaustion")

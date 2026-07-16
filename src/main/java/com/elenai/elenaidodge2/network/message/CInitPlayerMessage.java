@@ -71,7 +71,7 @@ public class CInitPlayerMessage implements IMessage {
 		void processMessage(CInitPlayerMessage message, MessageContext ctx) {
 				ClientStorage.maxDodges = message.maxDodges;
 				ClientStorage.dodges = message.dodges;
-				if(ModConfig.client.hud.tutorial && !Loader.isModLoaded("reskillable")) {
+				if(ModConfig.client.hud.tutorial && (!Loader.isModLoaded("reskillable") || !ClientStorage.reskillableEnabled)) {
 				ClientStorage.shownTutorial = false;
 				ClientStorage.tutorialDodges = 0;
 				}

@@ -38,6 +38,7 @@ This fork targets Minecraft 1.12.2 only. It is not intended to replace or backpo
 - Improved absorption feather display.
 - Server-controlled dodge animations built with Minecraft Forge 1.12.2 client rendering hooks.
 - First-person camera roll, particles, and sound tuning.
+- Optional Reskillable trait requirement for modpacks that disable Reskillable skills.
 - Runtime server config reload with `/elenaiReload`.
 - Updated feather GUI textures.
 

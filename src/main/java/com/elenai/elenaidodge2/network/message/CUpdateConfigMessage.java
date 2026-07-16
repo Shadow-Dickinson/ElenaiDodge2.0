@@ -21,7 +21,7 @@ public class CUpdateConfigMessage implements IMessage {
 	private int regenRate, dodges, absorption, maxDodges, dodgeAnimationDuration;
 	private float dodgeAnimationIntensity, firstPersonCameraIntensity;
 	private String weights;
-	private boolean half, tanEnabled, enhancedDodgeEffects, dodgeAnimation, firstPersonDodgeAnimation, firstPersonCameraDodgeAnimation;
+	private boolean half, tanEnabled, reskillableEnabled, enhancedDodgeEffects, dodgeAnimation, firstPersonDodgeAnimation, firstPersonCameraDodgeAnimation;
 
 	private boolean messageValid;
 
@@ -30,7 +30,7 @@ public class CUpdateConfigMessage implements IMessage {
 	}
 
 	public CUpdateConfigMessage(int regenRate, int dodges, String weights, boolean half, int absorption, int maxDodges,
-			boolean tanEnabled, boolean enhancedDodgeEffects, boolean dodgeAnimation, int dodgeAnimationDuration,
+			boolean tanEnabled, boolean reskillableEnabled, boolean enhancedDodgeEffects, boolean dodgeAnimation, int dodgeAnimationDuration,
 			float dodgeAnimationIntensity, boolean firstPersonDodgeAnimation, boolean firstPersonCameraDodgeAnimation,
 			float firstPersonCameraIntensity) {
 		this.regenRate = regenRate;
@@ -40,6 +40,7 @@ public class CUpdateConfigMessage implements IMessage {
 		this.absorption = absorption;
 		this.maxDodges = maxDodges;
 		this.tanEnabled = tanEnabled;
+		this.reskillableEnabled = reskillableEnabled;
 		this.enhancedDodgeEffects = enhancedDodgeEffects;
 		this.dodgeAnimation = dodgeAnimation;
 		this.dodgeAnimationDuration = dodgeAnimationDuration;
@@ -62,6 +63,7 @@ public class CUpdateConfigMessage implements IMessage {
 			this.absorption = buf.readInt();
 			this.maxDodges = buf.readInt();
 			this.tanEnabled = buf.readBoolean();
+			this.reskillableEnabled = buf.readBoolean();
 			this.enhancedDodgeEffects = buf.readBoolean();
 			this.dodgeAnimation = buf.readBoolean();
 			this.dodgeAnimationDuration = buf.readInt();
@@ -90,6 +92,7 @@ public class CUpdateConfigMessage implements IMessage {
 		buf.writeInt(absorption);
 		buf.writeInt(maxDodges);
 		buf.writeBoolean(tanEnabled);
+		buf.writeBoolean(reskillableEnabled);
 		buf.writeBoolean(enhancedDodgeEffects);
 		buf.writeBoolean(dodgeAnimation);
 		buf.writeInt(dodgeAnimationDuration);
@@ -123,6 +126,7 @@ public class CUpdateConfigMessage implements IMessage {
 			ClientStorage.weightValues = message.weights;
 			ClientStorage.halfFeathers = message.half;
 			ClientStorage.tanEnabled = message.tanEnabled;
+			ClientStorage.reskillableEnabled = message.reskillableEnabled;
 			ClientStorage.enhancedDodgeEffects = message.enhancedDodgeEffects;
 			ClientStorage.dodgeAnimation = message.dodgeAnimation;
 			ClientStorage.dodgeAnimationDuration = message.dodgeAnimationDuration;
